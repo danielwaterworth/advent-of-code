@@ -14,7 +14,8 @@ _start:
 
     xor r8, r8 ; buffer offset
     xor r9, r9 ; line number
-    xor r14, r14 ; output
+    xor r14, r14 ; part1 output
+    xor r15, r15 ; part2 output
 
 line_loop:
     lea rbx, [rsp+r8]
@@ -32,7 +33,19 @@ line_loop:
     inc r8
     inc r8
 
+    lea rbx, [rsp+r8]
     xor r13, r13 ; number of matching characters
+
+    movzx rsi, byte [rbx+r10-1]
+    cmp rsi, r12
+    sete cl
+    movzx rsi, byte [rbx+r11-1]
+    cmp rsi, r12
+    sete dl
+
+    xor cl, dl
+    add r15, rcx
+
 validate_loop:
     cmp byte [rsp+r8], 10
     je _done
@@ -64,9 +77,9 @@ invalid:
     jmp line_loop
 
 line_loop_end:
-    shr r14, 7
-    and r14, 127
-    mov rdi, r14
+    shr r15, 7
+    and r15, 127
+    mov rdi, r15
     mov rax, 60
     syscall
 
